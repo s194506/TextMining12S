@@ -4,7 +4,7 @@ library(hunspell)
 library(stringr)
 
 #zmiana katalogu roboczego
-workDir <- "C:\\Users\\Kamil\\Desktop\\KR\\TextMining12S\\data"
+workDir <- "C:\\Users\\Kamil\\Desktop\\KR\\TextMining12S"
 #zmienia lokalizacje katalogu roboczego na ta podana w zmiennej
 setwd(workDir)
 
@@ -15,8 +15,9 @@ scriptsDir <- ".\\scripts"
 workspaceDir <- ".\\workspaces"
 
 dir.create(workspaceDir, showWarnings = FALSE)
+dir.create(workspaceDir, showWarnings = FALSE)
 
-corpusDir <- paste(inputDir, "\\","Literatura - streszczenia - oryginal‚",
+corpusDir <- paste(inputDir, "\\","Literatura - streszczenia - oryginal",
                    sep = "")
 
 corpus <- VCorpus(
@@ -47,13 +48,13 @@ corpus <- tm_map(corpus, remove_char, intToUtf8(190), "")
 
 polish <- dictionary(lang = "pl_PL")
 
-lemmatize <- function(text){
+lemmatize <- function(text) {
   simple_text <- str_trim(as.character(text[1]))
   parsed_text <- strsplit(simple_text, split = " ")
-  new_text_vec <- hunspell_stem(parsed_text[1], dict = polish)
+  new_text_vec <- hunspell_stem(parsed_text[[1]], dict = polish)
   for (i in 1:length(new_text_vec)){
-    if(length(new_text_vec[[i]]) == 0) new_text_vec[i] <- parsed_ext[[1]][i]
-    if(length(new_text_vec[[i]]) > 1) new_text_vec[i] <- new_text_vec[[i]][1]
+    if (length(new_text_vec[[i]]) == 0) new_text_vec[i] <- parsed_text[[1]][i]
+    if (length(new_text_vec[[i]]) > 1) new_text_vec[i] <- new_text_vec[[i]][1]
   }
   new_text <- paste(new_text_vec, collapse = " ")
   return(new_text)
