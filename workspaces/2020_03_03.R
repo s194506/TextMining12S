@@ -34,3 +34,4 @@ stoplist <- readLines(stoplistFile, encoding = "UTF-8")
 #usuwam
 corpus <- tm_map(corpus, removeWords, stoplist)
 corpus <- tm_map(corpus, stripWhitespace)
+
