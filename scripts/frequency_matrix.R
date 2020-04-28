@@ -1,21 +1,20 @@
 library(tm)
-library(stringr)
+
 
 #zmiana katalogu roboczego
 workDir <- "C:\\Users\\Kamil\\Desktop\\KR\\TextMining12S"
 setwd(workDir)
 
-#definicja katalogow projektu
+#definicja katalogów projektu
 inputDir <- ".\\data"
 outputDir <- ".\\results"
-scriptsDir <- ".\\scripts"
 workspaceDir <- ".\\workspaces"
 
-#utworzenie katalogu wyjsciowego
+#utworzenie katalogu wyjœciowego
 dir.create(outputDir, showWarnings = FALSE)
 dir.create(workspaceDir, showWarnings = FALSE)
 
-#utworzenie korpusu dokumentoww
+#utworzenie korpusu dokumentów
 corpusDir <- paste(
   inputDir,
   "\\",
@@ -33,25 +32,24 @@ corpus <- VCorpus(
   )
 )
 
-#usuniecie rozszerzen z nazw dokumentow
-cutExtension <- function(document) {
+#usuniêcie rozszerzeñ z nazw dokumentów
+cutExtensions <- function(document) {
   meta(document, "id") <- gsub(pattern = "\\.txt$", "", meta(document, "id"))
   return(document)
 }
 
-corpus <- tm_map (corpus, cutExtension)
+corpus <- tm_map(corpus, cutExtensions)
 
-#utworzenie macierzy czestosci
+#utworzenie macierzy czêstoœci
 tdmTfAll <- TermDocumentMatrix(corpus)
 dtmTfAll <- DocumentTermMatrix(corpus)
-tdmTfidAll <- TermDocumentMatrix(
+tdmTfidfAll <- TermDocumentMatrix(
   corpus,
   control = list(
     weighting = weightTfIdf
   )
 )
-
-tdmBin <- TermDocumentMatrix(
+tdmBinAll <- TermDocumentMatrix(
   corpus,
   control = list(
     weighting = weightBin
@@ -65,7 +63,16 @@ tdmTfBounds <- TermDocumentMatrix(
     )
   )
 )
-tdmTfIdfBounds <- TermDocumentMatrix(
+tdmTfidfBounds <- TermDocumentMatrix(
+  corpus,
+  control = list(
+    weighting = weightTfIdf,
+    bounds = list(
+      global = c(2,16)
+    )
+  )
+)
+dtmTfidfBounds <- DocumentTermMatrix(
   corpus,
   control = list(
     weighting = weightTfIdf,
@@ -75,21 +82,21 @@ tdmTfIdfBounds <- TermDocumentMatrix(
   )
 )
 
-#konwersja
+#konwersja macierzy ¿adkich do macierzy klasycznych
 tdmTfAllMatrix <- as.matrix(tdmTfAll)
 dtmTfAllMatrix <- as.matrix(dtmTfAll)
-tdmTfidfAllMatrix <- as.matrix(tdmTfidAll)
-tdmBinAllMatrix <- as.matrix(tdmBin)
+tdmTfidfAllMatrix <- as.matrix(tdmTfidfAll)
+tdmBinAllMatrix <- as.matrix(tdmBinAll)
 tdmTfBoundsMatrix <- as.matrix(tdmTfBounds)
-tdmTfidfBoundsMatrix <- as.matrix(tdmTfIdfBounds)
+tdmTfidfBoundsMatrix <- as.matrix(tdmTfidfBounds)
+dtmTfidfBoundsMatrix <- as.matrix(dtmTfidfBounds)
 
+#eksport macirzy do pliku .csv
 #matrixFile <- paste(
 #  outputDir,
-# "\\",
-#  "tdmTfidBounds.csv",
-#  sep=""
+#  "\\",
+#  "tdmTfidfBounds.csv",
+#  sep = ""
 #)
-#write.table(tdmTfidfBoundsMatrix, file = matrixFile, sep=";",dec=",",col.names = NA)
-
-#skalowanie wielowymiarowe
+#write.table(tdmTfidfBoundsMatrix, file = matrixFile, sep = ";", dec = ",", col.names = NA)
 
